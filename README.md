@@ -87,7 +87,6 @@ Browser → Meridian UI (:3000)
 
 ## Teaching materials
 
-- `CLASS-SESSION-SCRIPT.md` — full classroom script (Docker vs Java, UI, demo flows)
 - `postman-collection.json` — API collection
 - `README1.md` / `README2.md` — extra session notes
 
@@ -103,6 +102,5 @@ Browser → Meridian UI (:3000)
 ├── notification-service/
 ├── docker-compose.yml       # Infra (MySQL, Redis, Kafka, Zookeeper)
 ├── start-all.ps1            # Infra + Java services
-├── start-ui.ps1             # UI on :3000
-└── CLASS-SESSION-SCRIPT.md
+└── start-ui.ps1             # UI on :3000
 ```
