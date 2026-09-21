@@ -1,0 +1,41 @@
+# Build outputs
+**/target/
+**/build/
+**/.gradle/
+**/out/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets & local env (use .env.example instead)
+.env
+.env.local
+*.pem
+*.key
+credentials.json
+
+# Logs / runtime
+*.log
+**/run.log
+**/run.err
+docker-start.log
+
+# Node (if students add tooling later)
+node_modules/
+npm-debug.log*
+
+# Java
+*.class
+hs_err_pid*
+replay_pid*

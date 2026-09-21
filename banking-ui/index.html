@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meridian — Digital Banking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-nav="welcome">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Meridian</span>
+    </a>
+    <nav class="topnav" id="topnav" hidden>
+      <button type="button" data-nav="dashboard">Overview</button>
+      <button type="button" data-nav="transfer">Transfer</button>
+      <button type="button" data-nav="history">History</button>
+      <button type="button" class="ghost" id="btn-switch">Switch account</button>
+    </nav>
+    <div class="api-pill" id="api-status" title="API Gateway">Checking…</div>
+  </header>
+
+  <main id="app">
+    <!-- Welcome -->
+    <section class="view view-welcome is-active" id="view-welcome" data-view="welcome">
+      <div class="hero">
+        <p class="eyebrow">Local microservices · Port 8080</p>
+        <h1 class="hero-brand">Meridian</h1>
+        <p class="hero-lead">Open an account or sign in with your account number to move money across the banking services running on your machine.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn primary" data-nav="create">Open account</button>
+          <button type="button" class="btn secondary" data-nav="signin">Use account number</button>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="vault-ring"></div>
+        <div class="vault-core"></div>
+      </div>
+    </section>
+
+    <!-- Sign in -->
+    <section class="view" id="view-signin" data-view="signin">
+      <div class="panel">
+        <h2>Sign in</h2>
+        <p class="muted">Enter an existing account number from the account service.</p>
+        <form id="form-signin" class="form">
+          <label>
+            Account number
+            <input name="accountNumber" required placeholder="e.g. ACC…" autocomplete="off" />
+          </label>
+          <button type="submit" class="btn primary">Continue</button>
+        </form>
+        <button type="button" class="link" data-nav="welcome">Back</button>
+      </div>
+    </section>
+
+    <!-- Create account -->
+    <section class="view" id="view-create" data-view="create">
+      <div class="panel wide">
+        <h2>Open an account</h2>
+        <p class="muted">Creates a new account via the API gateway → account-service.</p>
+        <form id="form-create" class="form grid-2">
+          <label>
+            Full name
+            <input name="accountHolderName" required placeholder="Alice Smith" />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" required placeholder="alice@demo.com" />
+          </label>
+          <label>
+            Phone
+            <input name="phone" required placeholder="9876543210" pattern="[0-9]{10,15}" />
+          </label>
+          <label>
+            Account type
+            <select name="accountType" required>
+              <option value="SAVINGS">Savings</option>
+              <option value="CURRENT">Current</option>
+              <option value="FIXED_DEPOSIT">Fixed deposit</option>
+            </select>
+          </label>
+          <label class="span-2">
+            Initial deposit (₹)
+            <input name="initialDeposit" type="number" min="1" step="1" required value="50000" />
+          </label>
+          <div class="span-2 actions">
+            <button type="submit" class="btn primary">Create account</button>
+            <button type="button" class="btn secondary" data-nav="welcome">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="view" id="view-dashboard" data-view="dashboard">
+      <div class="dash-head">
+        <div>
+          <p class="eyebrow" id="dash-type">Savings</p>
+          <h2 id="dash-name">Account holder</h2>
+          <p class="mono" id="dash-number">—</p>
+        </div>
+        <div class="balance-block">
+          <span class="balance-label">Available balance</span>
+          <strong class="balance-value" id="dash-balance">₹0.00</strong>
+          <span class="status-chip" id="dash-status">ACTIVE</span>
+        </div>
+      </div>
+      <div class="quick-row">
+        <button type="button" class="btn primary" data-nav="transfer">Send money</button>
+        <button type="button" class="btn secondary" data-nav="history">View history</button>
+        <button type="button" class="btn secondary" id="btn-refresh">Refresh</button>
+      </div>
+      <div class="meta-grid">
+        <div>
+          <span class="meta-label">Email</span>
+          <span id="dash-email">—</span>
+        </div>
+        <div>
+          <span class="meta-label">Phone</span>
+          <span id="dash-phone">—</span>
+        </div>
+        <div>
+          <span class="meta-label">Daily limit</span>
+          <span id="dash-limit">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transfer -->
+    <section class="view" id="view-transfer" data-view="transfer">
+      <div class="panel wide">
+        <h2>Transfer</h2>
+        <p class="muted">Routes through gateway → transaction-service (fraud check via Kafka).</p>
+        <form id="form-transfer" class="form grid-2">
+          <label>
+            From
+            <input name="senderAccountNumber" id="transfer-from" required readonly />
+          </label>
+          <label>
+            To (account number)
+            <input name="receiverAccountNumber" required placeholder="Receiver account number" />
+          </label>
+          <label>
+            Amount (₹)
+            <input name="amount" type="number" min="1" step="0.01" required placeholder="1000" />
+          </label>
+          <label>
+            Description
+            <input name="description" placeholder="Rent payment" />
+          </label>
+          <div class="span-2 actions">
+            <button type="submit" class="btn primary">Send transfer</button>
+            <button type="button" class="btn secondary" data-nav="dashboard">Back</button>
+          </div>
+        </form>
+        <div id="transfer-result" class="result" hidden></div>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section class="view" id="view-history" data-view="history">
+      <div class="panel wide">
+        <div class="panel-head">
+          <h2>Transaction history</h2>
+          <button type="button" class="btn secondary" id="btn-history-refresh">Refresh</button>
+        </div>
+        <div id="history-list" class="history-list">
+          <p class="muted">No transactions yet.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- OTP modal -->
+  <dialog id="otp-dialog">
+    <form method="dialog" id="form-otp" class="otp-sheet">
+      <h3>Verify transfer</h3>
+      <p class="muted">Fraud detection flagged this transfer. Enter the OTP from the notification-service logs.</p>
+      <p class="mono small" id="otp-txn-id"></p>
+      <label>
+        OTP
+        <input name="otp" inputmode="numeric" pattern="[0-9]{4,8}" required placeholder="6-digit code" autocomplete="one-time-code" />
+      </label>
+      <div class="actions">
+        <button type="submit" class="btn primary" value="verify">Verify</button>
+        <button type="button" class="btn secondary" id="otp-cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+{
+  "info": {
+    "name": "Digital Banking System",
+    "description": "Complete API collection for Digital Banking Microservices session demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "aliceAccountNumber",
+      "value": ""
+    },
+    {
+      "key": "bobAccountNumber",
+      "value": ""
+    },
+    {
+      "key": "transactionId",
+      "value": ""
+    },
+    {
+      "key": "otp",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health & Setup",
+      "item": [
+        {
+          "name": "Health Check - Gateway",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/actuator/health"
+          }
+        },
+        {
+          "name": "Health Check - Account Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:8081/actuator/health"
+          }
+        },
+        {
+          "name": "Health Check - Transaction Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:8082/actuator/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Account APIs",
+      "item": [
+        {
+          "name": "Create Account - Alice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var json = pm.response.json();",
+                  "    pm.collectionVariables.set('aliceAccountNumber', json.accountNumber);",
+                  "    console.log('Alice account:', json.accountNumber);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountHolderName\": \"Alice Smith\",\n  \"email\": \"alice@demo.com\",\n  \"phone\": \"9876543210\",\n  \"accountType\": \"SAVINGS\",\n  \"initialDeposit\": 50000\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/accounts"
+          }
+        },
+        {
+          "name": "Create Account - Bob",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var json = pm.response.json();",
+                  "    pm.collectionVariables.set('bobAccountNumber', json.accountNumber);",
+                  "    console.log('Bob account:', json.accountNumber);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountHolderName\": \"Bob Jones\",\n  \"email\": \"bob@demo.com\",\n  \"phone\": \"9876543211\",\n  \"accountType\": \"CURRENT\",\n  \"initialDeposit\": 30000\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/accounts"
+          }
+        },
+        {
+          "name": "Get Account Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{aliceAccountNumber}}"
+          }
+        },
+        {
+          "name": "Get Alice Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{aliceAccountNumber}}/balance"
+          }
+        },
+        {
+          "name": "Get Bob Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{bobAccountNumber}}/balance"
+          }
+        },
+        {
+          "name": "Block Account",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{aliceAccountNumber}}/block"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Flow A - Normal Transfer",
+      "item": [
+        {
+          "name": "Transfer Rs 1000 (Clean)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var json = pm.response.json();",
+                  "    pm.collectionVariables.set('transactionId', json.id);",
+                  "    console.log('Transaction ID:', json.id);",
+                  "    console.log('Status:', json.status);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderAccountNumber\": \"{{aliceAccountNumber}}\",\n  \"receiverAccountNumber\": \"{{bobAccountNumber}}\",\n  \"amount\": 1000,\n  \"description\": \"Rent payment - Flow A demo\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/transactions/transfer"
+          }
+        },
+        {
+          "name": "Get Transaction Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transactions/{{transactionId}}"
+          }
+        },
+        {
+          "name": "Alice Balance After Transfer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{aliceAccountNumber}}/balance"
+          }
+        },
+        {
+          "name": "Bob Balance After Transfer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{bobAccountNumber}}/balance"
+          }
+        },
+        {
+          "name": "Transaction History - Alice",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transactions/account/{{aliceAccountNumber}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Flow B - OTP / Fraud Transfer",
+      "item": [
+        {
+          "name": "Transfer Rs 45000 (Suspicious)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var json = pm.response.json();",
+                  "    pm.collectionVariables.set('transactionId', json.id);",
+                  "    console.log('Transaction ID:', json.id);",
+                  "    console.log('Check notification-service terminal for OTP!');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderAccountNumber\": \"{{aliceAccountNumber}}\",\n  \"receiverAccountNumber\": \"{{bobAccountNumber}}\",\n  \"amount\": 45000,\n  \"description\": \"Large transfer - Flow B fraud demo\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/transactions/transfer"
+          }
+        },
+        {
+          "name": "Get Transaction - Pending Verification",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transactions/{{transactionId}}"
+          }
+        },
+        {
+          "name": "Verify OTP (Correct)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transactions/{{transactionId}}/verify?otp={{otp}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transactions", "{{transactionId}}", "verify"],
+              "query": [
+                {
+                  "key": "otp",
+                  "value": "{{otp}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP (Wrong - Demo)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transactions/{{transactionId}}/verify?otp=000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transactions", "{{transactionId}}", "verify"],
+              "query": [
+                {
+                  "key": "otp",
+                  "value": "000000"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Balances After OTP Flow",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/{{aliceAccountNumber}}/balance"
+          }
+        }
+      ]
+    }
+  ]
+}
