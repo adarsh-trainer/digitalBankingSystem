@@ -4,8 +4,8 @@ package com.banking.transactionservice.service;
 import com.banking.transactionservice.model.Transaction;
 import com.banking.transactionservice.model.TransactionStatus;
 import com.banking.transactionservice.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,15 +18,18 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TransactionEventConsumer {
 
-    private final TransactionRepository transactionRepository;
-    private final RedisTemplate<String, String> redisTemplate;
-    private final TransactionService transactionService;
-    private static final long OTP_EXPIRY_MINUTES = 5;
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private TransactionService transactionService;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final long OTP_EXPIRY_MINUTES = 5;
 
     private static final String TRANSACTION_OTP_GENERATED_TOPIC = "transaction.otp.generated";
 

@@ -8,9 +8,9 @@ import com.banking.paymentservice.repository.PaymentRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -21,12 +21,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PaymentService {
 
-    private final PaymentRepository paymentRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Value("${razorpay.key-id}")
     private String keyId;

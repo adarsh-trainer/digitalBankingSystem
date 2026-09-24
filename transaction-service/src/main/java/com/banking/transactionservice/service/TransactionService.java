@@ -9,8 +9,8 @@ import com.banking.transactionservice.model.Transaction;
 import com.banking.transactionservice.model.TransactionStatus;
 import com.banking.transactionservice.model.TransactionType;
 import com.banking.transactionservice.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -24,14 +24,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TransactionService {
 
-    private final TransactionRepository transactionRepository;
-    private final AccountServiceClient accountServiceClient;
-
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private AccountServiceClient accountServiceClient;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
 
     private static final String TRANSACTION_INITIATED_TOPIC = "transaction.initiated";

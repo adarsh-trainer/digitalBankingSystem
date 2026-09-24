@@ -4,8 +4,8 @@ import com.banking.accountservice.dto.AccountResponse;
 import com.banking.accountservice.dto.CreateAccountRequest;
 import com.banking.accountservice.service.AccountService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/accounts")
-@RequiredArgsConstructor
 @Slf4j
 public class AccountController {
 
-    private final AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
     // Create new bank account
     @PostMapping

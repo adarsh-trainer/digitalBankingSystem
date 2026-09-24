@@ -6,8 +6,8 @@ import com.banking.accountservice.model.Account;
 import com.banking.accountservice.model.AccountStatus;
 import com.banking.accountservice.model.AccountType;
 import com.banking.accountservice.repository.AccountRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class AccountService {
 
-    private final AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
     private static SecureRandom secureRandom = new SecureRandom();
 
 
